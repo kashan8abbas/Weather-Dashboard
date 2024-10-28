@@ -1,0 +1,516 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Weather Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f6fa;
+    }
+
+    
+    .side-menu {
+      width: 20%;
+      background: linear-gradient(180deg, #2c3e50, #34495e);
+      color: white;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .side-menu h2 {
+      font-size: 1.8rem;
+      margin-bottom: 40px;
+    }
+
+    .side-menu nav ul {
+      list-style-type: none;
+      width: 100%;
+    }
+
+    .side-menu nav ul li {
+      margin: 20px 0;
+    }
+
+    .side-menu nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-size: 1.2rem;
+      padding: 10px;
+      display: block;
+      text-align: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .side-menu nav ul li a:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+    }
+
+   
+    .main-content {
+      width: 80%;
+      padding: 20px;
+      background-color: #3e829f;
+      background-size: cover; 
+      background-position: center; 
+      background-repeat: no-repeat; 
+      overflow-y: auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20%;
+      font-size: 2.5rem;
+      color: #2c3e50;
+    }
+
+  
+    .input-section {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 19px;
+    }
+
+    .input-section input {
+      
+      padding: 8px;
+      width: 650px;
+      border: 1px solid #2c1d1d;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    .input-section button {
+      padding: 15px 25px;
+      background: linear-gradient(180deg, #2c3e50, #34495e);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .input-section button:hover {
+      background-color: #1f6f92;
+    }
+
+    /* Weather Widget */
+    .weather-widget {
+    background: rgba(255, 255, 255, 0.1); 
+    color: white;
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+    margin-bottom: 30px;
+    box-shadow: 
+        0px 10px 20px rgba(0, 0, 0, 0.25); 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    backdrop-filter: blur(20px); 
+    border: 1px solid rgba(255, 255, 255, 0.3); 
+}
+
+
+    .weather-widget h3 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .element-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      font-size: 1.1rem;
+    }
+
+    .element-grid p {
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+
+    .weather-widget img {
+      width: 60px;
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+
+    /* Charts Section */
+    .charts {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      gap: 40px;
+    }
+
+    .chart-container {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      width: 300px;
+      height: 270px;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 
+        0px 10px 20px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(20px); 
+        border: 1px solid rgba(255, 255, 255, 0.3); 
+    }
+    .logo {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    margin-bottom: 10px; 
+    padding: 10px;
+    }
+    .logo img {
+        max-width: 60%;
+        height: auto; 
+        display: block;
+    }
+    #weatherIcon {
+      width: 50px;
+      height: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div class="side-menu">
+    <div class="logo">
+      <img src="assets/Logo.png" alt="Weather App Logo" class="logo" />
+    </div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="tablepage.html">Tables</a></li>
+      </ul>
+    </nav>
+  </div>
+
+
+  
+  <div class="main-content">
+    
+    <div class="input-section">
+      <input type="text" id="cityInput" placeholder="Enter City Name">
+      <button id="getWeather">Get Weather</button>
+    </div>
+
+    
+    <div id="weatherWidget" class="weather-widget">
+      <h3>Weather Information <img id="weatherIcon" alt="" /></h3>
+      <div class="element-grid">
+        <p>City: <span id="cityName"></span></p>
+        <p>Temperature: <span id="temperature"></span> °C</p>
+        <p>Weather: <span id="weatherDescription"></span></p>
+        <p>Humidity: <span id="humidity"></span> %</p>
+        <p>Wind Speed: <span id="windSpeed"></span> m/s</p>
+      </div>
+    </div>
+    
+    
+    <div class="charts">
+     
+      <div class="chart-container">
+        <canvas id="tempBarChart"></canvas>
+      </div>
+      
+      <div class="chart-container">
+        <canvas id="weatherDoughnutChart"></canvas>
+      </div>
+     
+      <div class="chart-container">
+        <canvas id="tempLineChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let barChartInstance = null;
+    let doughnutChartInstance = null;
+    let lineChartInstance = null;
+  
+    document.getElementById('getWeather').addEventListener('click', () => {
+      const city = document.getElementById('cityInput').value;
+  
+      if (city === "") {
+        alert("Please enter a city name.");
+        return;
+      }
+  
+      const apiKey = '7538c6665df8d8805bf7f078dbc0cb49';
+      const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+  
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("City not found");
+          }
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById('cityName').textContent = data.city.name;
+          document.getElementById('temperature').textContent = data.list[0].main.temp;
+          document.getElementById('weatherDescription').textContent = data.list[0].weather[0].main;
+  
+        
+          const iconCode = data.list[0].weather[0].icon;
+          const iconUrl = `http://openweathermap.org/img/wn/${iconCode}@2x.png`;
+          document.getElementById('weatherIcon').src = iconUrl;
+  
+          document.getElementById('humidity').textContent = data.list[0].main.humidity;
+          document.getElementById('windSpeed').textContent = data.list[0].wind.speed;
+  
+          
+          const weatherDescription = data.list[0].weather[0].main.toLowerCase();
+          
+          changeBackgroundImage(weatherDescription);
+  
+          const temps = [];
+          const weatherConditions = {};
+          const labels = [];
+  
+          for (let i = 0; i < data.list.length; i += 8) {
+            temps.push(data.list[i].main.temp);
+            const condition = data.list[i].weather[0].main;
+            labels.push(data.list[i].dt_txt.split(" ")[0]);
+  
+            if (weatherConditions[condition]) {
+              weatherConditions[condition]++;
+            } else {
+              weatherConditions[condition] = 1;
+            }
+          }
+  
+          const weatherData = Object.values(weatherConditions);
+          const weatherLabels = Object.keys(weatherConditions);
+  
+          if (barChartInstance) barChartInstance.destroy();
+          if (doughnutChartInstance) doughnutChartInstance.destroy();
+          if (lineChartInstance) lineChartInstance.destroy();
+  
+          const ctxBar = document.getElementById('tempBarChart').getContext('2d');
+          barChartInstance = new Chart(ctxBar, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Temperature (°C)',
+            data: temps,
+            backgroundColor: '#2980b9',
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#ffffff',
+                    font: {
+                        size: 14
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: '#ffffff' 
+                },
+                grid: {
+                    color: '#ffffff' 
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#ffffff' 
+                },
+                grid: {
+                    color: '#ffffff'
+                }
+            }
+        }
+    }
+});
+
+  
+          const ctxDoughnut = document.getElementById('weatherDoughnutChart').getContext('2d');
+          doughnutChartInstance = new Chart(ctxDoughnut, {
+    type: 'doughnut',
+    data: {
+        labels: weatherLabels,
+        datasets: [{
+            label: 'Weather Conditions',
+            data: weatherData,
+            backgroundColor: ['#3498db', '#2ecc71', '#f1c40f', '#e74c3c'],
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#ffffff', 
+                    font: {
+                        size: 14 // Optional: Set font size for legend labels
+                    }
+                }
+            }
+        }
+    }
+});
+
+  
+          const ctxLine = document.getElementById('tempLineChart').getContext('2d');
+          lineChartInstance = new Chart(ctxLine, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Temperature (°C)',
+            data: temps,
+            borderColor: '#2980b9',
+            backgroundColor: 'rgba(41, 128, 185, 0.3)',
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#ffffff', 
+                    font: {
+                        size: 14 
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: '#ffffff' 
+                },
+                title: {
+                    display: true,
+                    text: 'Date', 
+                    color: '#ffffff'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#ffffff' 
+                },
+                title: {
+                    display: true,
+                    text: 'Temperature (°C)', 
+                    color: '#ffffff' 
+                }
+            }
+        }
+    }
+});
+
+
+        })
+        .catch(error => {
+          console.error(error);
+          alert('City not found. Please try again.');
+        });
+    });
+  
+    function changeBackgroundImage(weatherDescription) {
+    
+    const mainContent = document.querySelector('.main-content');
+    let imageUrl = 'https://png.pngtree.com/thumb_back/fh260/background/20210908/pngtree-weather-blue-sky-daytime-white-clouds-clear-sky-image_817896.jpg'; // Default image URL
+
+    
+    switch (weatherDescription) {
+        case 'clear':
+            imageUrl = 'url("https://png.pngtree.com/thumb_back/fh260/background/20210908/pngtree-weather-blue-sky-daytime-white-clouds-clear-sky-image_817896.jpg")'; // Same as default image
+            break;
+        case 'clouds':
+            imageUrl = 'url("https://images.unsplash.com/photo-1566010503302-2564ae0d47b6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")'; // Replace with your cloudy image path
+            break;
+        case 'snow':
+            imageUrl = 'url("https://images.unsplash.com/photo-1542601098-8fc114e148e2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")'; // Replace with your snowy image path
+            break;
+        case 'rain':
+            imageUrl = 'url("https://media.istockphoto.com/id/503284599/photo/rainy-weather.jpg?s=612x612&w=0&k=20&c=pV38CVp0CLArYEZ6OUWnaqo6J5mo4JpbEZd61Vxr_I4=")'; // Replace with your rain image path
+            break;
+        case 'drizzle':
+            imageUrl = 'url("https://www.shutterstock.com/image-photo/drizzle-on-windshield-evening-600nw-667415725.jpg")'; // Replace with your drizzle image path
+            break;
+        case 'thunderstorm':
+            imageUrl = 'url("https://images.unsplash.com/photo-1584267385289-81fdaa6efe7a?q=80&w=2044&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")'; // Replace with your thunderstorm image path
+            break;
+        case 'mist':
+            imageUrl = 'url("https://plus.unsplash.com/premium_photo-1669613233573-4911a0a81c63?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Zm9yZXN0JTIwbWlzdHxlbnwwfHwwfHx8MA%3D%3D")'; // Replace with your mist image path
+            break;
+        case 'smoke':
+            imageUrl = 'url("https://images.unsplash.com/photo-1580462611434-39cde8c29330?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")'; // Replace with your smoke image path
+            break;
+        case 'haze':
+            imageUrl = 'url("https://plus.unsplash.com/premium_photo-1665772800584-d2da6dba1e4b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")'; // Replace with your haze image path
+            break;
+        case 'dust':
+            imageUrl = 'url("https://www.shutterstock.com/image-photo/climate-change-africa-dramatic-dusty-600nw-1751879375.jpg")'; // Replace with your dust image path
+            break;
+        case 'fog':
+            imageUrl = 'url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSP_NxSAV5ghIMJhx5nm1bbYQa0sBeGPRjE7Q&s")'; // Replace with your fog image path
+            break;
+        case 'sand':
+            imageUrl = 'url("https://static.vecteezy.com/system/resources/thumbnails/007/690/302/small/8k-orange-color-sandstorm-and-dust-storm-video.jpg")'; // Replace with your sand image path
+            break;
+        case 'ash':
+            imageUrl = 'url("https://rose-ash.com/content/images/size/w960/2024/02/8E6B9B99-F888-470F-B138-8F4C7C02EA1F.jpeg")'; // Replace with your ash image path
+            break;
+        case 'squall':
+            imageUrl = 'url("https://business.weatherzone.com.au/app/uploads/2023/01/Newcastle-squal-line-2021.jpeg")'; // Replace with your squall image path
+            break;
+        case 'tornado':
+            imageUrl = 'url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTutcm0u4nTg1RLhB1TAAX8i8F_W2DMCmaGbA&s")'; // Replace with your tornado image path
+            break;
+        default:
+            imageUrl = 'url("https://media.istockphoto.com/id/1007768414/photo/blue-sky-with-bright-sun-and-clouds.jpg?s=612x612&w=0&k=20&c=MGd2-v42lNF7Ie6TtsYoKnohdCfOPFSPQt5XOz4uOy4=")'; // Replace with your default image path
+            break;
+    }
+
+    
+    if (mainContent) {
+        mainContent.style.backgroundImage = imageUrl;
+        mainContent.style.backgroundSize = 'cover';
+        mainContent.style.backgroundPosition = 'center';
+        mainContent.style.backgroundRepeat = 'no-repeat';
+    }
+}
+
+
+
+  </script>
+  
+</body>
+</html>
